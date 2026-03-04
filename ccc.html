@@ -146,23 +146,6 @@
             </div>
           </div>
 
-          <!-- 簡報風格 -->
-          <div>
-            <div class="flex items-center justify-between mb-1">
-              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
-                <i data-lucide="presentation" class="w-3.5 h-3.5"></i> 簡報風格 (視覺設計)
-              </label>
-              <div id="badge-presentationStyle"></div>
-            </div>
-            <div class="relative">
-              <input type="text" id="input-presentationStyle" list="presentation-styles" placeholder="例如：極簡主義、未來主義..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
-              <button id="clear-presentationStyle" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
-              <datalist id="presentation-styles">
-                <option value="極簡主義 (Minimalist)"></option><option value="專業商務 (Corporate Professional)"></option><option value="蘋果風 (Apple Style)"></option><option value="賽博龐克 (Cyberpunk)"></option><option value="玻璃擬態 (Glassmorphism)"></option><option value="視覺敘事 (Visual Story)"></option><option value="資訊圖表 (Infographic)"></option><option value="北歐風 (Scandinavian)"></option><option value="水彩風 (Watercolor)"></option>
-              </datalist>
-            </div>
-          </div>
-
           <!-- 簡報頁數 -->
           <div>
             <div class="flex items-center justify-between mb-1">
@@ -178,8 +161,73 @@
             </div>
           </div>
 
+          <!-- 簡報風格 (佔據兩格寬度，讓內容更好顯示) -->
+          <div class="md:col-span-2">
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                <i data-lucide="presentation" class="w-3.5 h-3.5"></i> 簡報風格 (視覺設計)
+                <!-- 顯眼的提示標籤 -->
+                <span class="ml-2 px-2.5 py-0.5 rounded text-[11px] font-bold bg-amber-100 text-amber-700 dark:bg-amber-900/60 dark:text-amber-400 border border-amber-300 dark:border-amber-700 shadow-sm animate-pulse flex items-center gap-1">
+                  <i data-lucide="mouse-pointer-click" class="w-3 h-3"></i> 點選輸入框，瀏覽豐富的風格選項！
+                </span>
+              </label>
+              <div id="badge-presentationStyle"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-presentationStyle" list="presentation-styles" placeholder="點擊此處選擇風格，或直接輸入..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-presentationStyle" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+              <datalist id="presentation-styles">
+                <!-- 一、 經典與商務 (Classic & Corporate) -->
+                <option value="【極簡主義】Minimalist：大量留白、單色調、大字體。視覺乾淨俐落，讓觀眾專注於核心內容。"></option>
+                <option value="【專業商務】Corporate Professional：中性藍灰色調、圖表導向、排版嚴謹。具備強烈的信賴感，適合主管會議。"></option>
+                <option value="【執行長風格】Executive：金屬漸層質感、精緻化圖標。適合高階提案、董事會與財務報告，展現頂級專業。"></option>
+                <option value="【數據驅動】Data-Driven：強調互動式圖表、樞紐分析呈現。適合數據分析報告與 KPI 檢討。"></option>
+                <option value="【單色調】Monochrome：僅使用單一顏色（如全藍、全灰）的深淺明暗變化，帶來極致的視覺統一感。"></option>
+                <option value="【高對比】High Contrast：黑白對比或強烈互補色，讓文字極度醒目，適合光線明亮的大型演講。"></option>
+                <option value="【扁平化設計】Flat Design：純色區塊與幾何圖形，捨棄立體陰影。資訊傳遞直觀、清晰且具現代感。"></option>
+
+                <!-- 二、 現代科技與未來派 (Modern Tech & Futuristic) -->
+                <option value="【現代風】Modern：3D 漸層、流線型排版。適合科技新品發布與現代感強烈的展示。"></option>
+                <option value="【蘋果風】Apple Style：深色或純色背景、極簡大字、居中平鋪佈局。營造頂級設計導向的演講氛圍。"></option>
+                <option value="【深色模式】Dark Mode：深黑高對比、金屬奢華感。降低視覺疲勞，極具沉穩與高科技 Demo 氛圍。"></option>
+                <option value="【未來主義】Futuristic：霓虹線條、動態粒子、科幻發光元素。充滿速度感，適合 AI 或區塊鏈主題。"></option>
+                <option value="【賽博龐克】Cyberpunk：螢光粉、青綠等高對比霓虹色調搭配極暗背景。帶有超現實的高科技反烏托邦色彩。"></option>
+                <option value="【霓虹發光】Neon Glow：暗色背景加上發光邊框與螢光字體。視覺衝擊力極強，強調破壞性創新。"></option>
+
+                <!-- 三、 UI 介面與材質質感 (UI Material & Texture) -->
+                <option value="【玻璃擬態】Glassmorphism：半透明毛玻璃效果、層次感。適合 App 介面 Demo 與軟體展示。"></option>
+                <option value="【液態玻璃】Liquid Glass：流動感半透明。帶有新世代科技大廠的設計語彙與未來感介面展示。"></option>
+                <option value="【新擬物化】Neumorphism：結合扁平化與微小陰影，區塊如凸起或凹陷。視覺柔和且具備高級科技手感。"></option>
+                <option value="【質感設計】Material Design：卡片式排版、鮮明色彩與真實物理陰影。畫面極具條理且符合直覺。"></option>
+
+                <!-- 四、 敘事與資訊視覺化 (Narrative & Infographic) -->
+                <option value="【視覺敘事】Visual Story：全幅高畫質照片、連續性的故事敘述排版。適合品牌故事與行銷推廣。"></option>
+                <option value="【創意拼貼】Creative：自定義插圖、多重紋理疊加。版面自由度高，適合廣告企劃與個人作品集。"></option>
+                <option value="【時間軸】Timeline：以時間軸動畫為主體，強調里程碑。適合專案進度匯報與歷史回顧。"></option>
+                <option value="【資訊圖表】Infographic：將複雜數據與流程圖標化。極大化資訊傳遞效率，適合複雜概念解說。"></option>
+
+                <!-- 五、 藝術美學與次文化潮流 (Artistic & Subculture) -->
+                <option value="【奢華美學】Luxury Aesthetic：黑金、玫瑰金搭配細緻襯線字體。呈現高貴、典雅且精緻的昂貴感。"></option>
+                <option value="【包浩斯風格】Bauhaus：基礎幾何圖形與紅黃藍原色搭配。排版具備強烈結構感與現代藝術氣息。"></option>
+                <option value="【新粗獷主義】Neo-Brutalism：粗獷大色塊、硬邊線條暴露、不加修飾的粗體字。適合反傳統品牌與藝術展。"></option>
+                <option value="【孟菲斯設計】Memphis Design：大膽對比配色的不規則圖形與波浪點陣。活潑俏皮，適合創意年輕主題。"></option>
+                <option value="【千禧風】Y2K Aesthetic：金屬色、立體氣泡字、低畫質像素元素。充滿 2000 年代初期的復古未來流行感。"></option>
+                <option value="【龐克拼貼】Punk Collage：撕裂感拼貼、髒污噪點效果。極具叛逆張力，適合潮流 Zine 與音樂活動。"></option>
+
+                <!-- 六、 溫馨生活與插畫風格 (Lifestyle & Illustration) -->
+                <option value="【北歐風】Scandinavian：木質色、米白等自然溫暖色調。排版乾淨，給人放鬆、舒適的質感氛圍。"></option>
+                <option value="【復古風】Retro / Vintage：暖棕色調、噪點效果、仿舊紙張與老式字體。喚起懷舊情感，適合文化活動。"></option>
+                <option value="【粉彩柔和】Soft Pastel：低飽和馬卡龍色系。視覺感受輕盈、溫柔且無攻擊性。"></option>
+                <option value="【水彩風】Watercolor：邊緣暈染筆刷效果。充滿強烈的人文氣息與手作溫度。"></option>
+                <option value="【趣味風】Playful：顏色鮮豔、Q 彈感排版與卡通圖示。適合團隊培訓或產品趣味說明。"></option>
+                <option value="【可愛萌系】Cute Kawaii：粉嫩色系、圓潤線條與手繪表情。極具親和力，適合兒童產品與年輕客群。"></option>
+                <option value="【素樸有機】Naïve / Organic：不規則手繪感與有機形狀。隨性自然，適合創意腦力激盪與工作坊。"></option>
+              </datalist>
+            </div>
+          </div>
+
           <!-- 特殊要求 -->
-          <div>
+          <div class="md:col-span-2">
             <div class="flex items-center justify-between mb-1">
               <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">特殊要求 (選填)</label>
               <div id="badge-special"></div>
@@ -297,7 +345,7 @@
     // 狀態與設定
     // ==========================================
     // 請在此處填寫您的 Google Gemini API Key
-    const apiKey = "AIzaSyD8pYzjFwWhkCHOFnOAao5hrP5j4OMzGgE"; 
+    const apiKey = "AIzaSyDkISCO1q1CUwcHTENm0pGCNXjIF1QVKPc"; 
 
     const initialFormData = {
       subject: '英文', topic: '', grade: '', duration: '45 分鐘',
