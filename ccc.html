@@ -1,0 +1,825 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>顏麗真專屬提示詞機器</title>
+  
+  <!-- 載入 Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          animation: {
+            'fade-in': 'fadeIn 0.5s ease-out forwards',
+            'slide-in': 'slideIn 0.5s ease-out forwards',
+            'zoom-in': 'zoomIn 0.3s ease-out forwards',
+          },
+          keyframes: {
+            fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+            slideIn: { '0%': { opacity: '0', transform: 'translateY(1rem)' }, '100%': { opacity: '1', transform: 'translateY(0)' } },
+            zoomIn: { '0%': { opacity: '0', transform: 'scale(0.95)' }, '100%': { opacity: '1', transform: 'scale(1)' } },
+          }
+        }
+      }
+    }
+  </script>
+  
+  <!-- 載入 Lucide 圖示庫 -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    /* 隱藏捲動軸，保持畫面乾淨但可捲動 */
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+</head>
+<body class="bg-slate-50 dark:bg-slate-900 text-slate-800 dark:text-slate-200 font-sans selection:bg-blue-200 dark:selection:bg-blue-800 transition-colors duration-300 min-h-screen flex flex-col">
+
+  <!-- 頂部導覽列 -->
+  <header class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-20 transition-colors duration-300">
+    <div class="max-w-7xl mx-auto px-4 h-16 flex items-center justify-between">
+      <div class="flex items-center gap-2 text-blue-600 dark:text-blue-400">
+        <i data-lucide="sparkles" class="w-6 h-6"></i>
+        <h1 class="text-xl font-bold tracking-tight text-slate-900 dark:text-white">顏麗真專屬提示詞機器</h1>
+      </div>
+      <div class="flex items-center gap-4">
+        <div class="text-sm text-slate-500 dark:text-slate-400 hidden sm:block">
+          與 AI 對話自動完成表單 ➔ 一鍵生成教案與簡報
+        </div>
+        <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors" title="切換深色/淺色模式">
+          <i data-lucide="sun" id="icon-sun" class="w-5 h-5 hidden dark:block"></i>
+          <i data-lucide="moon" id="icon-moon" class="w-5 h-5 block dark:hidden"></i>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-4 py-6 flex flex-col gap-6 w-full flex-1">
+    
+    <!-- 上半部：表單與聊天室 -->
+    <div class="grid lg:grid-cols-12 gap-6 items-start">
+      
+      <!-- 左側：表單區塊 -->
+      <div class="lg:col-span-7 bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 animate-slide-in transition-colors duration-300">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="text-lg font-bold flex items-center gap-2 dark:text-white">
+            <i data-lucide="file-text" class="w-5 h-5 text-blue-500 dark:text-blue-400"></i>
+            教案參數設定
+          </h2>
+          <button id="btn-reset" class="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all duration-300 text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/40">
+            <i data-lucide="rotate-ccw" id="icon-reset" class="w-4 h-4"></i>
+            <span id="text-reset">重置全部</span>
+          </button>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- 產生表單欄位 -->
+          <!-- 教學科目 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">教學科目 <span class="text-red-500">*</span></label>
+              <div id="badge-subject"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-subject" list="subject-list" placeholder="例如：國語、數學、英文..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-subject" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+              <datalist id="subject-list">
+                <option value="國語文"></option><option value="英語文"></option><option value="數學"></option><option value="自然科學"></option><option value="社會"></option><option value="藝術"></option><option value="綜合活動"></option><option value="科技"></option><option value="健康與體育"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <!-- 教學主題 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">教學主題 <span class="text-red-500">*</span></label>
+              <div id="badge-topic"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-topic" placeholder="例如：光合作用、台灣歷史..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-topic" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <!-- 適用年級 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">適用年級 <span class="text-red-500">*</span></label>
+              <div id="badge-grade"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-grade" placeholder="例如：國小三年級..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-grade" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <!-- 課程時長 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">課程時長</label>
+              <div id="badge-duration"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-duration" list="duration-list" placeholder="例如：45 分鐘、2 節課..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-duration" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+              <datalist id="duration-list">
+                <option value="40 分鐘 (國小)"></option><option value="45 分鐘 (國中)"></option><option value="50 分鐘 (高中/大學)"></option><option value="90 分鐘 (連排兩節)"></option><option value="120 分鐘 (工作坊)"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <!-- 教學風格 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">教學風格</label>
+              <div id="badge-style"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-style" list="teaching-styles" placeholder="例如：專題導向、生活化..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-style" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+              <datalist id="teaching-styles">
+                <option value="活潑有趣，多互動"></option><option value="嚴謹專業，重邏輯"></option><option value="生活化，舉例豐富"></option><option value="啟發式，引導提問"></option><option value="專題導向 (PBL)"></option><option value="遊戲化學習 (Gamification)"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <!-- 簡報風格 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 flex items-center gap-1">
+                <i data-lucide="presentation" class="w-3.5 h-3.5"></i> 簡報風格 (視覺設計)
+              </label>
+              <div id="badge-presentationStyle"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-presentationStyle" list="presentation-styles" placeholder="例如：極簡主義、未來主義..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-presentationStyle" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+              <datalist id="presentation-styles">
+                <option value="極簡主義 (Minimalist)"></option><option value="專業商務 (Corporate Professional)"></option><option value="蘋果風 (Apple Style)"></option><option value="賽博龐克 (Cyberpunk)"></option><option value="玻璃擬態 (Glassmorphism)"></option><option value="視覺敘事 (Visual Story)"></option><option value="資訊圖表 (Infographic)"></option><option value="北歐風 (Scandinavian)"></option><option value="水彩風 (Watercolor)"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <!-- 簡報頁數 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">簡報頁數</label>
+              <div id="badge-slideCount"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-slideCount" list="slide-counts" placeholder="例如：10頁、15-20頁..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-14 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-slideCount" class="hidden absolute right-7 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+              <datalist id="slide-counts">
+                <option value="根據簡報內容自動調配"></option><option value="5-8 頁 (精華短講)"></option><option value="10-15 頁 (標準課堂)"></option><option value="15-20 頁 (詳細解說)"></option>
+              </datalist>
+            </div>
+          </div>
+
+          <!-- 特殊要求 -->
+          <div>
+            <div class="flex items-center justify-between mb-1">
+              <label class="block text-sm font-medium text-slate-700 dark:text-slate-300">特殊要求 (選填)</label>
+              <div id="badge-special"></div>
+            </div>
+            <div class="relative">
+              <input type="text" id="input-special" placeholder="例如：需要結合戶外活動..." class="w-full rounded-lg border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 p-2.5 pr-10 text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all placeholder:text-slate-400 dark:placeholder:text-slate-500" />
+              <button id="clear-special" class="hidden absolute right-2 top-1/2 -translate-y-1/2 p-1 text-slate-400 hover:text-red-500 dark:hover:text-red-400 transition-colors"><i data-lucide="x" class="w-4 h-4"></i></button>
+            </div>
+          </div>
+
+          <!-- 生成按鈕 -->
+          <div class="md:col-span-2 mt-4">
+            <button id="btn-generate" class="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 dark:disabled:bg-blue-800 text-white font-medium py-3 rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm">
+              <i data-lucide="sparkles" id="icon-generate-sparkles" class="w-5 h-5"></i>
+              <i data-lucide="loader-2" id="icon-generate-loader" class="w-5 h-5 animate-spin hidden"></i>
+              <span id="text-generate">一鍵生成專屬教案與簡報內容</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- 右側：AI 顧問聊天室 -->
+      <div class="lg:col-span-5 relative">
+        <div class="bg-white dark:bg-slate-800 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden sticky top-24 flex flex-col h-[600px] transition-colors duration-300">
+          
+          <div class="bg-blue-50 dark:bg-blue-900/30 px-5 py-4 border-b border-blue-100 dark:border-blue-900/50 flex items-center gap-3 transition-colors">
+            <div class="bg-blue-600 dark:bg-blue-500 p-2 rounded-full text-white">
+              <i data-lucide="bot" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="font-semibold text-slate-800 dark:text-slate-100">AI 教案顧問</h3>
+              <p class="text-xs text-blue-600 dark:text-blue-400">跟我聊天，我會幫你填寫左邊的表單</p>
+            </div>
+          </div>
+
+          <div id="chat-messages" class="flex-1 overflow-y-auto p-5 bg-slate-50 dark:bg-slate-900 space-y-5 transition-colors no-scrollbar">
+            <!-- 訊息將動態插入於此 -->
+          </div>
+          
+          <div id="chat-loading" class="hidden p-5 pt-0 bg-slate-50 dark:bg-slate-900 transition-colors">
+            <div class="flex gap-3">
+              <div class="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400 flex items-center justify-center">
+                <i data-lucide="bot" class="w-4 h-4"></i>
+              </div>
+              <div class="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl rounded-tl-none px-4 py-3 shadow-sm flex items-center gap-2">
+                <i data-lucide="loader-2" class="w-4 h-4 text-blue-500 animate-spin"></i>
+                <span class="text-sm text-slate-500 dark:text-slate-400">正在思考並填寫表單...</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="p-4 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 transition-colors">
+            <form id="chat-form" class="flex items-end gap-2">
+              <textarea id="chat-input" placeholder="例如：我要做小四的自然課，主題是天氣..." class="flex-1 resize-none rounded-xl bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 p-2.5 text-sm max-h-24 min-h-[44px] outline-none placeholder:text-slate-400 dark:placeholder:text-slate-500 transition-colors" rows="1"></textarea>
+              <button type="submit" id="chat-submit" class="flex-shrink-0 bg-blue-600 hover:bg-blue-700 disabled:bg-slate-300 dark:disabled:bg-slate-700 text-white p-2.5 rounded-xl transition-colors h-[44px] w-[44px] flex items-center justify-center">
+                <i data-lucide="send" class="w-4 h-4"></i>
+              </button>
+            </form>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- 下半部：並排顯示生成結果 -->
+    <div id="output-placeholder" class="bg-slate-50 dark:bg-slate-800/50 border border-slate-200 dark:border-slate-700 border-dashed rounded-2xl p-10 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500 gap-3">
+      <i data-lucide="sparkles" class="w-8 h-8 opacity-20"></i>
+      <p class="text-sm">完成上方設定並點擊「一鍵生成」，教案與簡報大綱將在此並排顯示</p>
+    </div>
+
+    <div id="output-container" class="hidden grid lg:grid-cols-2 gap-6 items-start animate-fade-in duration-700">
+      
+      <!-- 教案結果 (左) -->
+      <div id="lesson-wrapper" class="hidden bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <i data-lucide="file-text" class="w-5 h-5 text-indigo-500 dark:text-indigo-400"></i>
+            教案大綱
+          </h3>
+          <button id="btn-copy-lesson" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600">
+            <i data-lucide="copy" id="icon-copy-lesson" class="w-4 h-4"></i>
+            <i data-lucide="check" id="icon-check-lesson" class="w-4 h-4 hidden"></i>
+            <span id="text-copy-lesson">複製內容</span>
+          </button>
+        </div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
+          <div id="lesson-content" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></div>
+        </div>
+      </div>
+
+      <!-- 簡報提示詞結果 (右) -->
+      <div id="slides-wrapper" class="hidden bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-slate-200 dark:border-slate-700 p-5">
+        <div class="flex items-center justify-between mb-3">
+          <h3 class="font-bold text-slate-800 dark:text-slate-100 flex items-center gap-2">
+            <i data-lucide="presentation" class="w-5 h-5 text-emerald-500 dark:text-emerald-400"></i>
+            簡報內容與視覺設計
+          </h3>
+          <button id="btn-copy-slides" class="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-600">
+            <i data-lucide="copy" id="icon-copy-slides" class="w-4 h-4"></i>
+            <i data-lucide="check" id="icon-check-slides" class="w-4 h-4 hidden"></i>
+            <span id="text-copy-slides">複製內容</span>
+          </button>
+        </div>
+        <div class="bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-lg p-6 shadow-sm">
+           <div id="slides-content" class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed"></div>
+        </div>
+      </div>
+    </div>
+    
+  </main>
+
+  <!-- JavaScript 邏輯 -->
+  <script>
+    // ==========================================
+    // 狀態與設定
+    // ==========================================
+    // 請在此處填寫您的 Google Gemini API Key
+    const apiKey = "AIzaSyD8pYzjFwWhkCHOFnOAao5hrP5j4OMzGgE"; 
+
+    const initialFormData = {
+      subject: '英文', topic: '', grade: '', duration: '45 分鐘',
+      slideCount: '根據簡報內容自動調配', style: '', presentationStyle: '', special: ''
+    };
+
+    let state = {
+      formData: { ...initialFormData },
+      aiFilled: {},
+      generatedPrompts: { lesson: '', slides: '' },
+      messages: [{ role: 'assistant', content: '你好！我是你的專屬「教案設計助理」。請問你今天想設計什麼樣的課程？\n告訴我你的想法，我會自動幫你填寫左側的設定表單喔！' }],
+      isDarkMode: true,
+      showResetConfirm: false,
+      isGeneratingContent: false,
+      isLoading: false
+    };
+
+    const FIELDS = ['subject', 'topic', 'grade', 'duration', 'slideCount', 'style', 'presentationStyle', 'special'];
+
+    // ==========================================
+    // UI 更新函式
+    // ==========================================
+    function getAiBadgeHTML() {
+      return `<span class="text-[10px] font-bold text-green-700 dark:text-green-400 bg-green-100 dark:bg-green-900/40 border border-green-300 dark:border-green-800 px-1.5 py-0.5 rounded flex items-center gap-1 shadow-sm animate-zoom-in"><i data-lucide="sparkles" class="w-3 h-3"></i> AI 填入</span>`;
+    }
+
+    function updateFormUI() {
+      FIELDS.forEach(field => {
+        // 更新 Input 值
+        document.getElementById(`input-${field}`).value = state.formData[field];
+        
+        // 更新清除按鈕顯示
+        const clearBtn = document.getElementById(`clear-${field}`);
+        if (state.formData[field]) clearBtn.classList.remove('hidden');
+        else clearBtn.classList.add('hidden');
+
+        // 更新 AI Badge
+        const badgeContainer = document.getElementById(`badge-${field}`);
+        if (state.aiFilled[field]) badgeContainer.innerHTML = getAiBadgeHTML();
+        else badgeContainer.innerHTML = '';
+      });
+      lucide.createIcons();
+    }
+
+    function updateChatUI() {
+      const chatContainer = document.getElementById('chat-messages');
+      chatContainer.innerHTML = state.messages.map(msg => {
+        const isUser = msg.role === 'user';
+        const avatarClass = isUser ? 'bg-indigo-100 dark:bg-indigo-900/50 text-indigo-600 dark:text-indigo-400' : 'bg-blue-100 dark:bg-blue-900/50 text-blue-600 dark:text-blue-400';
+        const iconName = isUser ? 'user' : 'bot';
+        const msgClass = isUser 
+          ? 'bg-indigo-600 dark:bg-indigo-500 text-white rounded-tr-none' 
+          : 'bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300 rounded-tl-none whitespace-pre-wrap';
+        
+        return `
+          <div class="flex gap-3 ${isUser ? 'flex-row-reverse' : ''}">
+            <div class="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${avatarClass}">
+              <i data-lucide="${iconName}" class="w-4 h-4"></i>
+            </div>
+            <div class="max-w-[85%] rounded-2xl px-4 py-3 shadow-sm text-sm leading-relaxed ${msgClass}">
+              ${msg.content}
+            </div>
+          </div>
+        `;
+      }).join('');
+
+      // 載入中狀態
+      const loadingEl = document.getElementById('chat-loading');
+      if (state.isLoading) loadingEl.classList.remove('hidden');
+      else loadingEl.classList.add('hidden');
+
+      // 按鈕狀態
+      const submitBtn = document.getElementById('chat-submit');
+      const inputEl = document.getElementById('chat-input');
+      submitBtn.disabled = !inputEl.value.trim() || state.isLoading;
+
+      // 自動捲動到底部
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+      lucide.createIcons();
+    }
+
+    function updateOutputUI() {
+      const hasContent = state.generatedPrompts.lesson || state.generatedPrompts.slides;
+      const placeholder = document.getElementById('output-placeholder');
+      const container = document.getElementById('output-container');
+      const lessonWrapper = document.getElementById('lesson-wrapper');
+      const slidesWrapper = document.getElementById('slides-wrapper');
+      
+      if (hasContent) {
+        placeholder.classList.add('hidden');
+        container.classList.remove('hidden');
+      } else {
+        placeholder.classList.remove('hidden');
+        container.classList.add('hidden');
+      }
+
+      if (state.generatedPrompts.lesson) {
+        lessonWrapper.classList.remove('hidden');
+        document.getElementById('lesson-content').innerHTML = parseMarkdownToHTML(state.generatedPrompts.lesson);
+      } else {
+        lessonWrapper.classList.add('hidden');
+      }
+
+      if (state.generatedPrompts.slides) {
+        slidesWrapper.classList.remove('hidden');
+        document.getElementById('slides-content').innerHTML = parseMarkdownToHTML(state.generatedPrompts.slides);
+      } else {
+        slidesWrapper.classList.add('hidden');
+      }
+    }
+
+    function parseMarkdownToHTML(text) {
+      if (!text) return '';
+      return text.split('\n').map(line => {
+        const trimmedLine = line.trim();
+        if (!trimmedLine) return '<div class="h-2"></div>'; 
+        
+        let htmlLine = trimmedLine;
+        // Parse bold
+        htmlLine = htmlLine.replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 dark:text-slate-200">$1</strong>');
+        
+        if (trimmedLine.startsWith('# ')) return `<h1 class="text-xl font-bold mt-5 mb-3 text-slate-900 dark:text-white border-b border-slate-200 dark:border-slate-700 pb-2">${htmlLine.replace('# ', '')}</h1>`;
+        if (trimmedLine.startsWith('## ')) return `<h2 class="text-lg font-bold mt-6 mb-3 text-indigo-700 dark:text-indigo-400">${htmlLine.replace('## ', '')}</h2>`;
+        if (trimmedLine.startsWith('### ')) return `<h3 class="text-base font-bold mt-5 mb-2 text-slate-800 dark:text-slate-200 bg-slate-100 dark:bg-slate-800 inline-block px-2 py-1 rounded">${htmlLine.replace('### ', '')}</h3>`;
+        
+        if (trimmedLine.startsWith('- ') || trimmedLine.startsWith('* ')) {
+          return `<li class="ml-5 list-disc mb-1.5 pl-1">${htmlLine.substring(2)}</li>`;
+        }
+        
+        if (/^\d+\.\s/.test(trimmedLine)) {
+          return `<div class="ml-2 font-medium mt-3 mb-1 text-slate-800 dark:text-slate-200">${htmlLine}</div>`;
+        }
+
+        return `<p class="mb-2">${htmlLine}</p>`;
+      }).join('');
+    }
+
+    function toggleGenerateBtnLoading() {
+      const btn = document.getElementById('btn-generate');
+      const iconSparkles = document.getElementById('icon-generate-sparkles');
+      const iconLoader = document.getElementById('icon-generate-loader');
+      const textSpan = document.getElementById('text-generate');
+      
+      btn.disabled = state.isGeneratingContent;
+      if (state.isGeneratingContent) {
+        iconSparkles.classList.add('hidden');
+        iconLoader.classList.remove('hidden');
+        textSpan.textContent = 'AI 正在為您撰寫教案與簡報，請稍候...';
+      } else {
+        iconSparkles.classList.remove('hidden');
+        iconLoader.classList.add('hidden');
+        textSpan.textContent = '一鍵生成專屬教案與簡報內容';
+      }
+    }
+
+    // ==========================================
+    // 事件處理邏輯
+    // ==========================================
+    
+    // 初始化事件監聽
+    function initEvents() {
+      // 綁定輸入框 Input 事件
+      FIELDS.forEach(field => {
+        const input = document.getElementById(`input-${field}`);
+        input.addEventListener('input', (e) => {
+          state.formData[field] = e.target.value;
+          if (state.aiFilled[field]) state.aiFilled[field] = false;
+          updateFormUI();
+        });
+
+        // 綁定清除按鈕
+        document.getElementById(`clear-${field}`).addEventListener('click', () => {
+          state.formData[field] = '';
+          state.aiFilled[field] = false;
+          updateFormUI();
+        });
+      });
+
+      // 主題切換
+      document.getElementById('theme-toggle').addEventListener('click', () => {
+        state.isDarkMode = !state.isDarkMode;
+        if (state.isDarkMode) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      });
+
+      // 聊天相關
+      const chatInput = document.getElementById('chat-input');
+      chatInput.addEventListener('input', () => {
+        document.getElementById('chat-submit').disabled = !chatInput.value.trim() || state.isLoading;
+      });
+      chatInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          handleSendMessage();
+        }
+      });
+      document.getElementById('chat-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        handleSendMessage();
+      });
+
+      // 重置按鈕
+      document.getElementById('btn-reset').addEventListener('click', handleResetAll);
+
+      // 生成按鈕
+      document.getElementById('btn-generate').addEventListener('click', handleGenerateContent);
+
+      // 複製按鈕
+      document.getElementById('btn-copy-lesson').addEventListener('click', () => copyToClipboard('lesson'));
+      document.getElementById('btn-copy-slides').addEventListener('click', () => copyToClipboard('slides'));
+    }
+
+    // ==========================================
+    // 核心業務邏輯
+    // ==========================================
+    
+    function handleResetAll() {
+      const btn = document.getElementById('btn-reset');
+      const icon = document.getElementById('icon-reset');
+      const text = document.getElementById('text-reset');
+
+      if (!state.showResetConfirm) {
+        state.showResetConfirm = true;
+        btn.classList.remove('text-red-600', 'dark:text-red-400', 'bg-red-50', 'dark:bg-red-900/20', 'hover:bg-red-100', 'dark:hover:bg-red-900/40');
+        btn.classList.add('bg-red-600', 'text-white', 'hover:bg-red-700', 'shadow-md', 'animate-pulse');
+        icon.setAttribute('data-lucide', 'alert-triangle');
+        text.textContent = '再次點擊確認清空';
+        lucide.createIcons();
+        
+        setTimeout(() => {
+          if(state.showResetConfirm) {
+             state.showResetConfirm = false;
+             btn.classList.add('text-red-600', 'dark:text-red-400', 'bg-red-50', 'dark:bg-red-900/20', 'hover:bg-red-100', 'dark:hover:bg-red-900/40');
+             btn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700', 'shadow-md', 'animate-pulse');
+             icon.setAttribute('data-lucide', 'rotate-ccw');
+             text.textContent = '重置全部';
+             lucide.createIcons();
+          }
+        }, 3000);
+        return;
+      }
+      
+      state.formData = { ...initialFormData };
+      state.aiFilled = {};
+      state.generatedPrompts = { lesson: '', slides: '' };
+      state.messages = [{ role: 'assistant', content: '你好！我是你的專屬「教案設計助理」。請問你今天想設計什麼樣的課程？\n告訴我你的想法，我會自動幫你填寫左側的設定表單喔！' }];
+      state.showResetConfirm = false;
+      
+      btn.classList.add('text-red-600', 'dark:text-red-400', 'bg-red-50', 'dark:bg-red-900/20', 'hover:bg-red-100', 'dark:hover:bg-red-900/40');
+      btn.classList.remove('bg-red-600', 'text-white', 'hover:bg-red-700', 'shadow-md', 'animate-pulse');
+      icon.setAttribute('data-lucide', 'rotate-ccw');
+      text.textContent = '重置全部';
+      
+      updateFormUI();
+      updateChatUI();
+      updateOutputUI();
+    }
+
+    async function callGeminiAPI(userText, isContentGeneration = false, sysPrompt = null) {
+      // 更新：使用最穩定版本的 gemini-2.5-flash
+      const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+      
+      let payloadContents;
+      let systemInstructionText;
+
+      if (isContentGeneration) {
+        payloadContents = [{ role: 'user', parts: [{ text: userText }] }];
+        systemInstructionText = "你是一位擁有20年教學經驗的資深教育專家與教案設計師。請發揮創意與專業，提供具體、生動且符合現代教學趨勢的可執行內容，避免空泛的描述。";
+      } else {
+        payloadContents = state.messages.map(msg => ({
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: msg.content }]
+        }));
+        payloadContents.push({ role: 'user', parts: [{ text: userText }] });
+        
+        systemInstructionText = `你是一位專業的「教案設計助理」。
+你的目標是透過親切的對話，幫助老師釐清教學需求，並自動幫他們填寫設定表單。
+你可以詢問他們：教學科目、教學主題、適用年級、課程時長、期望的教學風格、期待的簡報風格(視覺設計)、簡報頁數、特殊要求。
+
+【重要填表指示：專業化參數】
+當你從對話中擷取資訊轉換為 JSON 時，請「不要」只是照抄使用者的口語字詞，請主動將其擴充、轉化為「專業、清晰且具體的教學參數」。
+當你從對話中得知任何上述資訊時，【必須】在回覆的最尾端加上一段 JSON 格式的代碼區塊，系統會讀取該區塊來自動更新表單。
+JSON 格式範例：
+\`\`\`json
+{
+  "subject": "自然科學",
+  "topic": "光合作用",
+  "grade": "國小五年級",
+  "duration": "45 分鐘",
+  "slideCount": "10-12 頁",
+  "style": "結合生活實例與小組競賽的探索式學習",
+  "presentationStyle": "極簡主義 (Minimalist)：大量留白、單色調、大字體，視覺乾淨俐落",
+  "special": "班上有兩位過動症學生，需要安排動態活動與明確指令"
+}
+\`\`\`
+如果你只知道部分資訊，就只回傳該欄位即可。絕對不要在正常對話內容中提及 JSON。`;
+      }
+
+      let retries = 0;
+      while (retries < 3) {
+        try {
+          if (!apiKey) {
+             throw new Error("請先在程式碼中設定 API Key");
+          }
+
+          const response = await fetch(url, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contents: payloadContents,
+              systemInstruction: { parts: [{ text: systemInstructionText }] }
+            })
+          });
+
+          if (!response.ok) {
+             const errorData = await response.json().catch(() => null);
+             const errorMsg = errorData && errorData.error ? errorData.error.message : `HTTP status: ${response.status}`;
+             throw new Error(errorMsg);
+          }
+          
+          const data = await response.json();
+          const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
+          if (text) return text;
+          throw new Error("API 回應格式不正確");
+          
+        } catch (error) {
+          console.error("API Call Error:", error);
+          retries++;
+          if (retries >= 3) {
+             // 顯示更具體的錯誤訊息幫助除錯
+             return isContentGeneration 
+                ? `生成失敗，錯誤訊息：\n${error.message}\n請檢查您的 API Key 或稍後再試。` 
+                : `連線失敗 (${error.message})，請檢查 API Key 或網路連線。`;
+          }
+          await new Promise(resolve => setTimeout(resolve, 1000 * Math.pow(2, retries - 1)));
+        }
+      }
+    }
+
+    async function handleSendMessage() {
+      const chatInput = document.getElementById('chat-input');
+      const userText = chatInput.value.trim();
+      if (!userText || state.isLoading) return;
+
+      chatInput.value = '';
+      state.messages.push({ role: 'user', content: userText });
+      state.isLoading = true;
+      updateChatUI();
+
+      const replyText = await callGeminiAPI(userText, false);
+      
+      let displayText = replyText;
+      const jsonMatch = replyText.match(/```json\n([\s\S]*?)\n```/);
+      if (jsonMatch) {
+        try {
+          const parsedData = JSON.parse(jsonMatch[1]);
+          FIELDS.forEach(key => {
+            if (parsedData[key] !== undefined && parsedData[key] !== '') {
+              state.formData[key] = parsedData[key];
+              state.aiFilled[key] = true;
+            }
+          });
+          displayText = replyText.replace(/```json\n[\s\S]*?\n```/, '').trim();
+          updateFormUI();
+        } catch (e) {
+          console.error("JSON parsing error", e);
+        }
+      }
+
+      state.messages.push({ role: 'assistant', content: displayText });
+      state.isLoading = false;
+      updateChatUI();
+    }
+
+    async function handleGenerateContent() {
+      if (!state.formData.subject || !state.formData.topic || !state.formData.grade) {
+        alert('請填寫教學科目、教學主題與適用年級！');
+        return;
+      }
+
+      state.isGeneratingContent = true;
+      toggleGenerateBtnLoading();
+
+      const lessonPrompt = `我需要您以「資深課程設計專家」的角度，為【${state.formData.grade}】的學生設計一份專業、具備深度且實用的教案，科目為【${state.formData.subject}】，主題為【${state.formData.topic}】。
+
+【核心設計參數】
+- 教學風格與氛圍：${state.formData.style || '專業、清晰且具啟發性'}
+- 預計授課時間：${state.formData.duration}
+${state.formData.special ? `- 特殊需求與限制：${state.formData.special}` : ''}
+
+【請直接產出這份客製化教案，請「務必保留以下大標題與子標題的骨架」，以確保教案格式標準化。請在骨架內發揮您的教育專業「自由生成」，內容需生動、具體且可執行，多善用列點排版】
+
+# 課程教案大綱
+
+## 一、 基本資料
+(請由 AI 生成，需包含：科目 ${state.formData.subject} / 主題 ${state.formData.topic} / 對象 ${state.formData.grade} / 時間 ${state.formData.duration})
+
+## 二、 設計理念與教學目標
+(請由 AI 專業生成，說明設計理念並列出 3-4 點具體可測量的教學目標)
+
+## 三、 教學準備
+(請由 AI 專業生成，列出所需的教具與環境建議)
+
+## 四、 教學流程（總時數：${state.formData.duration}）
+(請務必依照以下三個階段規劃，並在各階段內詳細寫出具體步驟、教師提問、學生活動。請多用列點以保持排版清晰)
+
+### 1. 引起動機 (請 AI 依照總時數合理分配時間)
+(請由 AI 具體規劃：如何用生動的方式開場？有什麼具體的提問或小活動？)
+
+### 2. 發展活動 (請 AI 依照總時數合理分配時間，可拆分為多個主要活動)
+(請由 AI 具體規劃：詳細寫出操作步驟、教師講解重點、學生的實作或小組任務)
+
+### 3. 綜合活動 (請 AI 依照總時數合理分配時間)
+(請由 AI 具體規劃：如何收斂今日重點？進行隨堂小測驗、反思或指派延伸任務)
+
+## 五、 評量方式
+(請由 AI 專業生成，提供具體的評量項目與配分)
+
+## 六、 教學省思建議
+(請由 AI 專業生成，提供老師課後可以反思的幾個具體問題點)`.trim();
+
+      const slidesPrompt = `延續我們針對【${state.formData.subject}】科目的【${state.formData.topic}】(${state.formData.grade}) 所設計的教案，我現在需要製作一份教學簡報 (PPT)。
+請以簡報設計專家的角度，為我產出詳細的「簡報內容大綱」，讓我可以直接貼入 PPT 或是 AI 簡報工具 (如 Gamma/Canva) 中生成。
+
+【核心設計參數】
+- 簡報視覺與排版風格設定：${state.formData.presentationStyle || state.formData.style || '專業、清晰且具啟發性'}
+- 建議總頁數：${state.formData.slideCount || '根據簡報內容自動調配'}
+${state.formData.special ? `- 特殊需求與限制：${state.formData.special}` : ''}
+
+【請直接產出簡報內容，使用 Markdown 格式】
+請依據上述的頁數建議，自由發揮與規劃每一頁的內容 (Slide 1, Slide 2...)。
+每一頁請務必包含：該頁的「標題」、「文案重點 (精簡有力)」與「視覺建議 (根據上述定義的簡報風格，給予 AI 生圖或排版設計的參考)」。
+
+結尾請附上一段「整體視覺與配色建議」。`.trim();
+
+      const [lessonContent, slidesContent] = await Promise.all([
+        callGeminiAPI(lessonPrompt, true),
+        callGeminiAPI(slidesPrompt, true)
+      ]);
+
+      state.generatedPrompts.lesson = lessonContent;
+      state.generatedPrompts.slides = slidesContent;
+      state.isGeneratingContent = false;
+      
+      toggleGenerateBtnLoading();
+      updateOutputUI();
+      
+      // 平滑捲動到底部觀看結果
+      setTimeout(() => {
+        document.getElementById('output-container').scrollIntoView({ behavior: 'smooth' });
+      }, 100);
+    }
+
+    function copyToClipboard(type) {
+      const rawText = state.generatedPrompts[type];
+      if (!rawText) return;
+
+      const cleanText = rawText
+        .replace(/\*\*(.*?)\*\*/g, '$1') 
+        .replace(/^#+\s/gm, '')          
+        .replace(/^(\s+)[\*\-]\s/gm, '$1◦ ') 
+        .replace(/^[\*\-]\s/gm, '• ')    
+        .replace(/\n{3,}/g, '\n\n')      
+        .trim();
+
+      // UI 變化
+      const btn = document.getElementById(`btn-copy-${type}`);
+      const iconCopy = document.getElementById(`icon-copy-${type}`);
+      const iconCheck = document.getElementById(`icon-check-${type}`);
+      const textSpan = document.getElementById(`text-copy-${type}`);
+
+      const originalClasses = btn.className;
+      btn.className = 'flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-colors bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-400';
+      iconCopy.classList.add('hidden');
+      iconCheck.classList.remove('hidden');
+      textSpan.textContent = '已複製！';
+
+      const resetUI = () => {
+        btn.className = originalClasses;
+        iconCopy.classList.remove('hidden');
+        iconCheck.classList.add('hidden');
+        textSpan.textContent = '複製內容';
+      };
+
+      try {
+        navigator.clipboard.writeText(cleanText).then(
+          () => setTimeout(resetUI, 2000),
+          fallbackCopy
+        );
+      } catch (err) {
+        fallbackCopy();
+      }
+
+      function fallbackCopy() {
+        const textArea = document.createElement("textarea");
+        textArea.value = cleanText;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          setTimeout(resetUI, 2000);
+        } catch (err) {
+          console.error('Copy failed', err);
+          resetUI();
+        }
+        document.body.removeChild(textArea);
+      }
+    }
+
+    // ==========================================
+    // 啟動應用程式
+    // ==========================================
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initEvents();
+      updateFormUI();
+      updateChatUI();
+    });
+
+  </script>
+</body>
+</html>
